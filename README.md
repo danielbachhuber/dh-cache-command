@@ -1,7 +1,7 @@
 danielbachhuber/dh-cache-command
 ================================
 
-Detects presence of a page cache.
+Page cache detection and WP Super Cache configuration.
 
 [![Build Status](https://travis-ci.org/danielbachhuber/dh-cache-command.svg?branch=master)](https://travis-ci.org/danielbachhuber/dh-cache-command)
 

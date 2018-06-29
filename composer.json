@@ -1,6 +1,6 @@
 {
     "name": "danielbachhuber/dh-cache-command",
-    "description": "Detects presence of a page cache.",
+    "description": "Page cache detection and WP Super Cache configuration.",
     "type": "wp-cli-package",
     "homepage": "https://github.com/danielbachhuber/dh-cache-command",
     "license": "MIT",

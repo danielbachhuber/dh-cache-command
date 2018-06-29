@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Page cache detection and WP Super Cache configuration
+ * Page cache detection and WP Super Cache configuration.
  */
 class DH_Cache_Command {
 
