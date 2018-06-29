@@ -1,8 +1,8 @@
 {
-    "name": "danielbachhuber/cache-detect-command",
+    "name": "danielbachhuber/dh-cache-command",
     "description": "Detects presence of a page cache.",
     "type": "wp-cli-package",
-    "homepage": "https://github.com/danielbachhuber/cache-detect-command",
+    "homepage": "https://github.com/danielbachhuber/dh-cache-command",
     "license": "MIT",
     "authors": [],
     "minimum-stability": "dev",
