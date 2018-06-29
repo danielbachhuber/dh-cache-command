@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Detects presence of a page cache.
+ * Page cache detection and WP Super Cache configuration
  */
-class Cache_Detect_Command {
+class DH_Cache_Command {
 
 	/**
 	 * Detects presence of a page cache.
@@ -56,8 +56,10 @@ class Cache_Detect_Command {
 	 *     | page_cache        | disabled |
 	 *     | page_cache_plugin |          |
 	 *     +-------------------+----------+
+	 *
+	 * @subcommand detect
 	 */
-	public function __invoke( $_, $assoc_args ) {
+	public function detect( $_, $assoc_args ) {
 
 		$status = array(
 			'page_cache'        => 'disabled',

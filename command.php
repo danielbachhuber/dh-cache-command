@@ -8,4 +8,4 @@ $autoload = dirname( __FILE__ ) . '/vendor/autoload.php';
 if ( file_exists( $autoload ) ) {
 	require_once $autoload;
 }
-WP_CLI::add_command( 'cache-detect', 'Cache_Detect_Command' );
+WP_CLI::add_command( 'dh-cache', 'DH_Cache_Command' );

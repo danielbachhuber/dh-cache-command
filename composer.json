@@ -20,6 +20,6 @@
         "behat/behat": "~2.5"
     },
     "extra": {
-        "commands": [ "cache-detect" ]
+        "commands": [ "dh-cache detect" ]
     }
 }
