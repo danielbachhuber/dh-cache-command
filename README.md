@@ -10,21 +10,48 @@ Quick links: [Using](#using) | [Installing](#installing) | [Contributing](#contr
 ## Using
 
 ~~~
-wp cache-detect 
+wp cache-detect [--format=<format>]
 ~~~
+
+Page cache detection happens in two steps:
+
+1. If the `WP_CACHE` constant is true and `advanced-cache.php` exists,
+then `page_cache=enabled`. However, if `advanced-cache.php` is missing,
+then `page_cache=broken`.
+2. Scans `active_plugins` options for known page cache plugins, and
+reports them if found.
 
 **OPTIONS**
 
-[--format=<format>]
----
-default: table
-options:
-  - table
-  - json
-  - yaml
----
+	[--format=<format>]
+		Render output in a specific format.
+		---
+		default: table
+		options:
+		  - table
+		  - json
+		  - yaml
+		---
 
 **EXAMPLES**
+
+    # WP Super Cache detected.
+    $ wp cache-detect
+    +-------------------+----------------+
+    | key               | value          |
+    +-------------------+----------------+
+    | page_cache        | enabled        |
+    | page_cache_plugin | wp-super-cache |
+    +-------------------+----------------+
+
+    # Page cache detected but plugin is unknown.
+    $ wp cache-detect
+    +-------------------+---------+
+    | key               | value   |
+    +-------------------+---------+
+    | page_cache        | enabled |
+    | page_cache_plugin | unknown |
+    +-------------------+---------+
 
     # No page cache detected.
     $ wp cache-detect
