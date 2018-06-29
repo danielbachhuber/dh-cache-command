@@ -13,6 +13,28 @@ Quick links: [Using](#using) | [Installing](#installing) | [Contributing](#contr
 wp cache-detect 
 ~~~
 
+**OPTIONS**
+
+[--format=<format>]
+---
+default: table
+options:
+  - table
+  - json
+  - yaml
+---
+
+**EXAMPLES**
+
+    # No page cache detected.
+    $ wp cache-detect
+    +-------------------+----------+
+    | key               | value    |
+    +-------------------+----------+
+    | page_cache        | disabled |
+    | page_cache_plugin |          |
+    +-------------------+----------+
+
 ## Installing
 
 Installing this package requires WP-CLI v1.1.0 or greater. Update to the latest stable release with `wp cli update`.
