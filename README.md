@@ -1,7 +1,7 @@
 danielbachhuber/cache-detect
 ============================
 
-Detect presence of a page cache
+Detects presence of a page cache.
 
 [![Build Status](https://travis-ci.org/danielbachhuber/cache-detect.svg?branch=master)](https://travis-ci.org/danielbachhuber/cache-detect)
 
@@ -9,7 +9,9 @@ Quick links: [Using](#using) | [Installing](#installing) | [Contributing](#contr
 
 ## Using
 
-
+~~~
+wp cache-detect 
+~~~
 
 ## Installing
 

@@ -1,6 +1,6 @@
 {
     "name": "danielbachhuber/cache-detect",
-    "description": "Detect presence of a page cache",
+    "description": "Detects presence of a page cache.",
     "type": "wp-cli-package",
     "homepage": "https://github.com/danielbachhuber/cache-detect",
     "license": "MIT",
@@ -8,6 +8,9 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "autoload": {
+        "psr-4": {
+            "": "src/"
+        },
         "files": [ "command.php" ]
     },
     "require": {
@@ -15,5 +18,8 @@
     },
     "require-dev": {
         "behat/behat": "~2.5"
+    },
+    "extra": {
+        "commands": [ "cache-detect" ]
     }
 }
