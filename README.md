@@ -21,6 +21,8 @@ then `page_cache=broken`.
 2. Scans `active_plugins` options for known page cache plugins, and
 reports them if found.
 
+See 'Examples' section for demonstrations of usage.
+
 **OPTIONS**
 
 	[--format=<format>]

@@ -16,6 +16,8 @@ class DH_Cache_Command {
 	 * 2. Scans `active_plugins` options for known page cache plugins, and
 	 * reports them if found.
 	 *
+	 * See 'Examples' section for demonstrations of usage.
+	 *
 	 * ## OPTIONS
 	 *
 	 * [--format=<format>]
