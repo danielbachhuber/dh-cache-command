@@ -33,7 +33,7 @@ class DH_Cache_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # WP Super Cache detected.
-	 *     $ wp cache-detect
+	 *     $ wp dh-cache detect
 	 *     +-------------------+----------------+
 	 *     | key               | value          |
 	 *     +-------------------+----------------+
@@ -42,7 +42,7 @@ class DH_Cache_Command {
 	 *     +-------------------+----------------+
 	 *
 	 *     # Page cache detected but plugin is unknown.
-	 *     $ wp cache-detect
+	 *     $ wp dh-cache detect
 	 *     +-------------------+---------+
 	 *     | key               | value   |
 	 *     +-------------------+---------+
@@ -51,12 +51,12 @@ class DH_Cache_Command {
 	 *     +-------------------+---------+
 	 *
 	 *     # No page cache detected.
-	 *     $ wp cache-detect
+	 *     $ wp dh-cache detect
 	 *     +-------------------+----------+
 	 *     | key               | value    |
 	 *     +-------------------+----------+
 	 *     | page_cache        | disabled |
-	 *     | page_cache_plugin |          |
+	 *     | page_cache_plugin | none     |
 	 *     +-------------------+----------+
 	 *
 	 * @subcommand detect
@@ -65,7 +65,7 @@ class DH_Cache_Command {
 
 		$status = array(
 			'page_cache'        => 'disabled',
-			'page_cache_plugin' => '',
+			'page_cache_plugin' => 'none',
 		);
 
 		if ( WP_CACHE ) {

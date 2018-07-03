@@ -38,7 +38,7 @@ See 'Examples' section for demonstrations of usage.
 **EXAMPLES**
 
     # WP Super Cache detected.
-    $ wp cache-detect
+    $ wp dh-cache detect
     +-------------------+----------------+
     | key               | value          |
     +-------------------+----------------+
@@ -47,7 +47,7 @@ See 'Examples' section for demonstrations of usage.
     +-------------------+----------------+
 
     # Page cache detected but plugin is unknown.
-    $ wp cache-detect
+    $ wp dh-cache detect
     +-------------------+---------+
     | key               | value   |
     +-------------------+---------+
@@ -56,12 +56,12 @@ See 'Examples' section for demonstrations of usage.
     +-------------------+---------+
 
     # No page cache detected.
-    $ wp cache-detect
+    $ wp dh-cache detect
     +-------------------+----------+
     | key               | value    |
     +-------------------+----------+
     | page_cache        | disabled |
-    | page_cache_plugin |          |
+    | page_cache_plugin | none     |
     +-------------------+----------+
 
 ## Installing
