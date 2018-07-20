@@ -9,6 +9,12 @@ Quick links: [Using](#using) | [Installing](#installing) | [Contributing](#contr
 
 ## Using
 
+This package implements the following commands:
+
+### wp dh-cache detect
+
+Detects presence of a page cache.
+
 ~~~
 wp dh-cache detect [--format=<format>]
 ~~~
@@ -63,6 +69,52 @@ See 'Examples' section for demonstrations of usage.
     | page_cache        | disabled |
     | page_cache_plugin | none     |
     +-------------------+----------+
+
+
+
+### wp dh-cache verify-super-cache-settings
+
+Verifies WP Super Cache configuration settings.
+
+~~~
+wp dh-cache verify-super-cache-settings [--format=<format>]
+~~~
+
+Checks the following configuration settings for correct values:
+
+* Caching enabled.
+* Don't cache pages for known users.
+* Don't cache pages with GET parameters.
+* Serve existing cache while being generated.
+* Make known users anonymous and serve supercached files.
+* Proudly tell the world your server is Stephen Fry proof.
+
+See 'Examples' section for demonstrations of usage.
+
+**OPTIONS**
+
+	[--format=<format>]
+		Render output in a specific format.
+		---
+		default: table
+		options:
+		  - table
+		  - json
+		  - yaml
+		---
+
+**EXAMPLES**
+
+    # One cache setting is incorrect.
+    $ wp dh-cache verify-super-cache-settings
+    +-----------------------------------+----------+----------+
+    | setting                           | expected | actual   |
+    +-----------------------------------+----------+----------+
+    | Caching enabled                   | enabled  | enabled  |
+    | Don't cache pages for known users | enabled  | disabled |
+    | [...]                             |          |          |
+    +-----------------------------------+----------+----------+
+    Error: 1 WP Super Cache setting is incorrect.
 
 ## Installing
 

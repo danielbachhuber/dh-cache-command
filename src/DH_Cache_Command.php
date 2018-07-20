@@ -86,6 +86,101 @@ class DH_Cache_Command {
 	}
 
 	/**
+	 * Verifies WP Super Cache configuration settings.
+	 *
+	 * Checks the following configuration settings for correct values:
+	 *
+	 * * Caching enabled.
+	 * * Don't cache pages for known users.
+	 * * Don't cache pages with GET parameters.
+	 * * Serve existing cache while being generated.
+	 * * Make known users anonymous and serve supercached files.
+	 * * Proudly tell the world your server is Stephen Fry proof.
+	 *
+	 * See 'Examples' section for demonstrations of usage.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--format=<format>]
+	 * : Render output in a specific format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - json
+	 *   - yaml
+	 * ---
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     # One cache setting is incorrect.
+	 *     $ wp dh-cache verify-super-cache-settings
+	 *     +-----------------------------------+----------+----------+
+	 *     | setting                           | expected | actual   |
+	 *     +-----------------------------------+----------+----------+
+	 *     | Caching enabled                   | enabled  | enabled  |
+	 *     | Don't cache pages for known users | enabled  | disabled |
+	 *     | [...]                             |          |          |
+	 *     +-----------------------------------+----------+----------+
+	 *     Error: 1 WP Super Cache setting is incorrect.
+	 *
+	 * @subcommand verify-super-cache-settings
+	 */
+	public function verify_super_cache_settings( $_, $assoc_args ) {
+		$page_cache_plugins = self::detect_page_cache_plugins();
+		if ( ! in_array( 'wp-super-cache', $page_cache_plugins ) ) {
+			WP_CLI::error( 'WP Super Cache is not active.' );
+		}
+		if ( ! WP_CACHE ) {
+			WP_CLI::error( 'WP_CACHE constant is false and should be true.' );
+		}
+		if ( ! is_readable( WP_CONTENT_DIR . '/advanced-cache.php' ) ) {
+			WP_CLI::error( "advanced-cache.php isn't readable and likely misconfigured." );
+		}
+		$settings = array();
+		$incorrect = 0;
+		foreach ( self::get_wp_super_cache_settings() as $sc_setting ) {
+			$expected_display = $sc_setting['expected'];
+			if ( is_bool( $expected_display ) || is_numeric( $expected_display ) ) {
+				$expected_display = $expected_display ? 'enabled' : 'disabled';
+			}
+
+			$actual = null;
+			if ( isset( $sc_setting['global'] ) ) {
+				$actual = $GLOBALS[ $sc_setting['global'] ];
+			}
+			$actual_display = $actual;
+			if ( is_bool( $sc_setting['expected'] ) || is_numeric( $sc_setting['expected'] ) ) {
+				$actual_display = $actual_display ? 'enabled' : 'disabled';
+			}
+
+			// WP Super Cache does a mix of strict and non-strict comparisons.
+			if ( $actual != $sc_setting['expected'] ) {
+				$incorrect++;
+			}
+
+			$setting_data = array(
+				'setting'  => $sc_setting['label'],
+				'expected' => $expected_display,
+				'actual'   => $actual_display,
+			);
+			$settings[] = $setting_data;
+		}
+
+		WP_CLI\Utils\format_items( $assoc_args['format'], $settings, array( 'setting', 'expected', 'actual' ) );
+		if ( 'table' === $assoc_args['format'] ) {
+			if ( $incorrect ) {
+				$grammar = $incorrect > 1 ? 'settings are' : 'setting is';
+				WP_CLI::error( "{$incorrect} WP Super Cache {$grammar} incorrect." );
+			} else {
+				WP_CLI::success( "All WP Super Cache settings are correct." );
+			}
+		} else {
+			WP_CLI::halt( $incorrect ? 1 : 0 );
+		}
+	}
+
+	/**
 	 * Detects any active page cache plugins.
 	 *
 	 * @return array
@@ -110,6 +205,44 @@ class DH_Cache_Command {
 			$bits = explode( '/', $plugin );
 			return $bits[0];
 		}, $active_page_cache_plugins );
+	}
+
+	/**
+	 * Expected WP Super Cache settings.
+	 */
+	private static function get_wp_super_cache_settings() {
+		return array(
+			array(
+				'label'    => 'Caching enabled',
+				'global'   => 'super_cache_enabled',
+				'expected' => true,
+			),
+			array(
+				'label'    => "Don't cache pages for known users",
+				'global'   => 'wp_cache_not_logged_in',
+				'expected' => 1,
+			),
+			array(
+				'label'    => "Don't cache pages with GET parameters",
+				'global'   => 'wp_cache_no_cache_for_get',
+				'expected' => 1,
+			),
+			array(
+				'label'    => 'Serve existing cache while being generated',
+				'global'   => 'cache_rebuild_files',
+				'expected' => 1,
+			),
+			array(
+				'label'    => 'Make known users anonymous and serve supercached files',
+				'global'   => 'wp_cache_make_known_anon',
+				'expected' => 0,
+			),
+			array(
+				'label'    => 'Proudly tell the world your server is Stephen Fry proof',
+				'global'   => 'wp_cache_hello_world',
+				'expected' => 0,
+			),
+		);
 	}
 
 	/**
