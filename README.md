@@ -88,6 +88,7 @@ Imposes expected value for the following settings:
 * Serve existing cache while being generated.
 * Make known users anonymous and serve supercached files.
 * Proudly tell the world your server is Stephen Fry proof.
+* Mobile device support.
 
 See 'Examples' section for demonstrations of usage.
 
@@ -122,6 +123,7 @@ Checks the following configuration settings for correct values:
 * Serve existing cache while being generated.
 * Make known users anonymous and serve supercached files.
 * Proudly tell the world your server is Stephen Fry proof.
+* Mobile device support.
 
 See 'Examples' section for demonstrations of usage.
 

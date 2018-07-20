@@ -96,6 +96,7 @@ class DH_Cache_Command {
 	 * * Serve existing cache while being generated.
 	 * * Make known users anonymous and serve supercached files.
 	 * * Proudly tell the world your server is Stephen Fry proof.
+	 * * Mobile device support.
 	 *
 	 * See 'Examples' section for demonstrations of usage.
 	 *
@@ -169,6 +170,7 @@ class DH_Cache_Command {
 	 * * Serve existing cache while being generated.
 	 * * Make known users anonymous and serve supercached files.
 	 * * Proudly tell the world your server is Stephen Fry proof.
+	 * * Mobile device support.
 	 *
 	 * See 'Examples' section for demonstrations of usage.
 	 *
@@ -318,6 +320,11 @@ class DH_Cache_Command {
 				'label'    => 'Proudly tell the world your server is Stephen Fry proof',
 				'global'   => 'wp_cache_hello_world',
 				'expected' => 0,
+			),
+			array(
+				'label'    => 'Mobile device support',
+				'global'   => 'wp_cache_mobile_enabled',
+				'expected' => 1,
 			),
 		);
 		// Load global variables into scope because they aren't handled by WP-CLI.
