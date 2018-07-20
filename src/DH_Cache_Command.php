@@ -86,6 +86,79 @@ class DH_Cache_Command {
 	}
 
 	/**
+	 * Configures WP Super Cache settings.
+	 *
+	 * Imposes expected value for the following settings:
+	 *
+	 * * Caching enabled.
+	 * * Don't cache pages for known users.
+	 * * Don't cache pages with GET parameters.
+	 * * Serve existing cache while being generated.
+	 * * Make known users anonymous and serve supercached files.
+	 * * Proudly tell the world your server is Stephen Fry proof.
+	 *
+	 * See 'Examples' section for demonstrations of usage.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     # Three settings are incorrect and updated.
+	 *     $ wp dh-cache configure-super-cache-settings
+	 *     Updated 'Don't cache pages for known users' to 'enabled'.
+	 *     Updated 'Don't cache pages with GET parameters' to 'enabled'.
+	 *     Updated 'Serve existing cache while being generated' to 'enabled'.
+	 *     Success: Updated 3 WP Super Cache settings.
+	 *
+	 *     # No cache settings are incorrect.
+	 *     $ wp dh-cache configure-super-cache-settings
+	 *     Success: All WP Super Cache settings are correctly configured without changes.
+	 *
+	 * @subcommand configure-super-cache-settings
+	 */
+	public function configure_super_cache_settings() {
+		self::verify_wp_super_cache_setup();
+
+		$updated = 0;
+		foreach ( self::get_wp_super_cache_settings() as $sc_setting ) {
+
+			$actual = self::get_wp_super_cache_actual_value( $sc_setting );
+
+			// WP Super Cache does a mix of strict and non-strict comparisons.
+			if ( $actual == $sc_setting['expected'] ) {
+				continue;
+			}
+
+			$expected_display = $sc_setting['expected'];
+			if ( is_bool( $expected_display ) || is_numeric( $expected_display ) ) {
+				$expected_display = $expected_display ? 'enabled' : 'disabled';
+			}
+
+			$actual_display = $actual;
+			if ( is_bool( $sc_setting['expected'] ) || is_numeric( $sc_setting['expected'] ) ) {
+				$actual_display = $actual_display ? 'enabled' : 'disabled';
+			}
+
+			$setting_key = null;
+			if ( isset( $sc_setting['global'] ) ) {
+				$setting_key = $sc_setting['global'];
+			}
+			if ( is_null( $setting_key ) ) {
+				WP_CLI::error( 'Invalid WP Super Cache setting key.' );
+			}
+
+			wp_cache_setting( $setting_key, $sc_setting['expected'] );
+			WP_CLI::log( "Updated '{$sc_setting['label']}' to '{$expected_display}'." );
+			$updated++;
+		}
+
+		if ( $updated ) {
+			$message = "Updated {$updated} WP Super Cache settings.";
+		} else {
+			$message = 'All WP Super Cache settings are correctly configured without changes.';
+		}
+		WP_CLI::success( $message );
+	}
+
+	/**
 	 * Verifies WP Super Cache configuration settings.
 	 *
 	 * Checks the following configuration settings for correct values:
@@ -116,10 +189,10 @@ class DH_Cache_Command {
 	 *     # One cache setting is incorrect.
 	 *     $ wp dh-cache verify-super-cache-settings
 	 *     +-----------------------------------+----------+----------+
-	 *     | setting                           | expected | actual   |
+	 *     | setting                           | actual   | expected |
 	 *     +-----------------------------------+----------+----------+
 	 *     | Caching enabled                   | enabled  | enabled  |
-	 *     | Don't cache pages for known users | enabled  | disabled |
+	 *     | Don't cache pages for known users | disabled | enabled  |
 	 *     | [...]                             |          |          |
 	 *     +-----------------------------------+----------+----------+
 	 *     Error: 1 WP Super Cache setting is incorrect.
@@ -127,16 +200,7 @@ class DH_Cache_Command {
 	 * @subcommand verify-super-cache-settings
 	 */
 	public function verify_super_cache_settings( $_, $assoc_args ) {
-		$page_cache_plugins = self::detect_page_cache_plugins();
-		if ( ! in_array( 'wp-super-cache', $page_cache_plugins ) ) {
-			WP_CLI::error( 'WP Super Cache is not active.' );
-		}
-		if ( ! WP_CACHE ) {
-			WP_CLI::error( 'WP_CACHE constant is false and should be true.' );
-		}
-		if ( ! is_readable( WP_CONTENT_DIR . '/advanced-cache.php' ) ) {
-			WP_CLI::error( "advanced-cache.php isn't readable and likely misconfigured." );
-		}
+		self::verify_wp_super_cache_setup();
 		$settings = array();
 		$incorrect = 0;
 		foreach ( self::get_wp_super_cache_settings() as $sc_setting ) {
@@ -145,10 +209,7 @@ class DH_Cache_Command {
 				$expected_display = $expected_display ? 'enabled' : 'disabled';
 			}
 
-			$actual = null;
-			if ( isset( $sc_setting['global'] ) ) {
-				$actual = $GLOBALS[ $sc_setting['global'] ];
-			}
+			$actual         = self::get_wp_super_cache_actual_value( $sc_setting );
 			$actual_display = $actual;
 			if ( is_bool( $sc_setting['expected'] ) || is_numeric( $sc_setting['expected'] ) ) {
 				$actual_display = $actual_display ? 'enabled' : 'disabled';
@@ -167,7 +228,7 @@ class DH_Cache_Command {
 			$settings[] = $setting_data;
 		}
 
-		WP_CLI\Utils\format_items( $assoc_args['format'], $settings, array( 'setting', 'expected', 'actual' ) );
+		WP_CLI\Utils\format_items( $assoc_args['format'], $settings, array( 'setting', 'actual', 'expected' ) );
 		if ( 'table' === $assoc_args['format'] ) {
 			if ( $incorrect ) {
 				$grammar = $incorrect > 1 ? 'settings are' : 'setting is';
@@ -177,6 +238,22 @@ class DH_Cache_Command {
 			}
 		} else {
 			WP_CLI::halt( $incorrect ? 1 : 0 );
+		}
+	}
+
+	/**
+	 * Verifies that the basics of WP Super Cache are functional.
+	 */
+	private static function verify_wp_super_cache_setup() {
+		$page_cache_plugins = self::detect_page_cache_plugins();
+		if ( ! in_array( 'wp-super-cache', $page_cache_plugins ) ) {
+			WP_CLI::error( 'WP Super Cache is not active.' );
+		}
+		if ( ! WP_CACHE ) {
+			WP_CLI::error( 'WP_CACHE constant is false and should be true.' );
+		}
+		if ( ! is_readable( WP_CONTENT_DIR . '/advanced-cache.php' ) ) {
+			WP_CLI::error( "advanced-cache.php isn't readable and likely misconfigured." );
 		}
 	}
 
@@ -211,7 +288,7 @@ class DH_Cache_Command {
 	 * Expected WP Super Cache settings.
 	 */
 	private static function get_wp_super_cache_settings() {
-		return array(
+		$settings = array(
 			array(
 				'label'    => 'Caching enabled',
 				'global'   => 'super_cache_enabled',
@@ -243,6 +320,28 @@ class DH_Cache_Command {
 				'expected' => 0,
 			),
 		);
+		// Load global variables into scope because they aren't handled by WP-CLI.
+		foreach ( $settings as $setting ) {
+			if ( isset( $setting['global'] ) ) {
+				global ${$setting['global']};
+			}
+		}
+		@include WP_CONTENT_DIR . '/wp-cache-config.php';
+		return $settings;
+	}
+
+	/**
+	 * Get the actual value for a WP Super Cache setting.
+	 *
+	 * @param array $setting Details about the setting.
+	 * @return mixed
+	 */
+	private static function get_wp_super_cache_actual_value( $setting ) {
+		$actual = null;
+		if ( isset( $setting['global'] ) ) {
+			$actual = $GLOBALS[ $setting['global'] ];
+		}
+		return $actual;
 	}
 
 	/**

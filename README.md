@@ -72,6 +72,40 @@ See 'Examples' section for demonstrations of usage.
 
 
 
+### wp dh-cache configure-super-cache-settings
+
+Configures WP Super Cache settings.
+
+~~~
+wp dh-cache configure-super-cache-settings 
+~~~
+
+Imposes expected value for the following settings:
+
+* Caching enabled.
+* Don't cache pages for known users.
+* Don't cache pages with GET parameters.
+* Serve existing cache while being generated.
+* Make known users anonymous and serve supercached files.
+* Proudly tell the world your server is Stephen Fry proof.
+
+See 'Examples' section for demonstrations of usage.
+
+**EXAMPLES**
+
+    # Three settings are incorrect and updated.
+    $ wp dh-cache configure-super-cache-settings
+    Updated 'Don't cache pages for known users' to 'enabled'.
+    Updated 'Don't cache pages with GET parameters' to 'enabled'.
+    Updated 'Serve existing cache while being generated' to 'enabled'.
+    Success: Updated 3 WP Super Cache settings.
+
+    # No cache settings are incorrect.
+    $ wp dh-cache configure-super-cache-settings
+    Success: All WP Super Cache settings are correctly configured without changes.
+
+
+
 ### wp dh-cache verify-super-cache-settings
 
 Verifies WP Super Cache configuration settings.
@@ -108,10 +142,10 @@ See 'Examples' section for demonstrations of usage.
     # One cache setting is incorrect.
     $ wp dh-cache verify-super-cache-settings
     +-----------------------------------+----------+----------+
-    | setting                           | expected | actual   |
+    | setting                           | actual   | expected |
     +-----------------------------------+----------+----------+
     | Caching enabled                   | enabled  | enabled  |
-    | Don't cache pages for known users | enabled  | disabled |
+    | Don't cache pages for known users | disabled | enabled  |
     | [...]                             |          |          |
     +-----------------------------------+----------+----------+
     Error: 1 WP Super Cache setting is incorrect.
