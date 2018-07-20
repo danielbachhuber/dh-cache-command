@@ -91,6 +91,8 @@ class DH_Cache_Command {
 	 * Imposes expected value for the following settings:
 	 *
 	 * * Caching enabled.
+	 * * Expert cache delivery method.
+	 * * .htaccess rewrite rules for expert cache.
 	 * * Don't cache pages for known users.
 	 * * Don't cache pages with GET parameters.
 	 * * Serve existing cache while being generated.
@@ -138,15 +140,18 @@ class DH_Cache_Command {
 				$actual_display = $actual_display ? 'enabled' : 'disabled';
 			}
 
-			$setting_key = null;
 			if ( isset( $sc_setting['global'] ) ) {
-				$setting_key = $sc_setting['global'];
-			}
-			if ( is_null( $setting_key ) ) {
+				wp_cache_setting( $sc_setting['global'], $sc_setting['expected'] );
+			} elseif ( isset( $sc_setting['update_callback'] ) ) {
+				$sc_setting['update_callback']();
+				$actual = $sc_setting['get_callback']();
+				if ( $actual != $sc_setting['expected'] ) {
+					WP_CLI::error( "Failed to update '{$sc_setting['label']}'." );
+				}
+			} else {
 				WP_CLI::error( 'Invalid WP Super Cache setting key.' );
 			}
 
-			wp_cache_setting( $setting_key, $sc_setting['expected'] );
 			WP_CLI::log( "Updated '{$sc_setting['label']}' to '{$expected_display}'." );
 			$updated++;
 		}
@@ -165,6 +170,8 @@ class DH_Cache_Command {
 	 * Checks the following configuration settings for correct values:
 	 *
 	 * * Caching enabled.
+	 * * Expert cache delivery method.
+	 * * .htaccess rewrite rules for expert cache.
 	 * * Don't cache pages for known users.
 	 * * Don't cache pages with GET parameters.
 	 * * Serve existing cache while being generated.
@@ -297,6 +304,38 @@ class DH_Cache_Command {
 				'expected' => true,
 			),
 			array(
+				'label'    => 'Expert cache delivery method',
+				'global'   => 'wp_cache_mod_rewrite',
+				'expected' => 1,
+			),
+			array(
+				'label'           => '.htaccess rewrite rules for expert cache',
+				'expected'        => 'configured',
+				'get_callback'    => function() {
+					$home_path = ABSPATH;
+					$home_path = trailingslashit( $home_path );
+					if ( ! file_exists( $home_path . '.htaccess' ) ) {
+						return 'missing-htaccess';
+					}
+					if ( ! function_exists( 'extract_from_markers' ) ) {
+						include_once( ABSPATH . 'wp-admin/includes/misc.php' );
+					}
+					$generated_rules = wpsc_get_htaccess_info();
+					$existing_rules  = implode( "\n", extract_from_markers( $home_path . '.htaccess', 'WPSuperCache' ) );
+					if ( $generated_rules['rules'] !== $existing_rules ) {
+						return 'missing-rules';
+					}
+					return 'configured';
+				},
+				'update_callback' => function() {
+					global $update_mod_rewrite_rules_error;
+					update_mod_rewrite_rules();
+					if ( $update_mod_rewrite_rules_error ) {
+						WP_CLI::warning( "Mod rewrite update failure: {$update_mod_rewrite_rules_error}" );
+					}
+				},
+			),
+			array(
 				'label'    => "Don't cache pages for known users",
 				'global'   => 'wp_cache_not_logged_in',
 				'expected' => 1,
@@ -347,6 +386,8 @@ class DH_Cache_Command {
 		$actual = null;
 		if ( isset( $setting['global'] ) ) {
 			$actual = $GLOBALS[ $setting['global'] ];
+		} elseif ( isset( $setting['get_callback'] ) ) {
+			$actual = $setting['get_callback']();
 		}
 		return $actual;
 	}

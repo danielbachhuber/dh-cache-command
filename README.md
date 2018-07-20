@@ -83,6 +83,8 @@ wp dh-cache configure-super-cache-settings
 Imposes expected value for the following settings:
 
 * Caching enabled.
+* Expert cache delivery method.
+* .htaccess rewrite rules for expert cache.
 * Don't cache pages for known users.
 * Don't cache pages with GET parameters.
 * Serve existing cache while being generated.
@@ -118,6 +120,8 @@ wp dh-cache verify-super-cache-settings [--format=<format>]
 Checks the following configuration settings for correct values:
 
 * Caching enabled.
+* Expert cache delivery method.
+* .htaccess rewrite rules for expert cache.
 * Don't cache pages for known users.
 * Don't cache pages with GET parameters.
 * Serve existing cache while being generated.
