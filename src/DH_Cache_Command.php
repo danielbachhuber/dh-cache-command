@@ -90,15 +90,15 @@ class DH_Cache_Command {
 	 *
 	 * Imposes expected value for the following settings:
 	 *
-	 * * Caching enabled.
-	 * * Expert cache delivery method.
-	 * * .htaccess rewrite rules for expert cache.
-	 * * Don't cache pages for known users.
-	 * * Don't cache pages with GET parameters.
-	 * * Serve existing cache while being generated.
-	 * * Make known users anonymous and serve supercached files.
-	 * * Proudly tell the world your server is Stephen Fry proof.
-	 * * Mobile device support.
+	 * * Enabled: Full-page caching.
+	 * * Enabled: Expert cache delivery method.
+	 * * Enabled: .htaccess rewrite rules for expert cache.
+	 * * Disabled: Caching pages for logged-in users.
+	 * * Disabled: Caching pages with GET parameters.
+	 * * Enabled: Serve existing cache while being generated.
+	 * * Disabled: Make known users anonymous and serve supercached files.
+	 * * Disabled: Proudly tell the world your server is Stephen Fry proof.
+	 * * Enabled: Mobile device support.
 	 *
 	 * See 'Examples' section for demonstrations of usage.
 	 *
@@ -169,15 +169,15 @@ class DH_Cache_Command {
 	 *
 	 * Checks the following configuration settings for correct values:
 	 *
-	 * * Caching enabled.
-	 * * Expert cache delivery method.
-	 * * .htaccess rewrite rules for expert cache.
-	 * * Don't cache pages for known users.
-	 * * Don't cache pages with GET parameters.
-	 * * Serve existing cache while being generated.
-	 * * Make known users anonymous and serve supercached files.
-	 * * Proudly tell the world your server is Stephen Fry proof.
-	 * * Mobile device support.
+	 * * Enabled: Full-page caching.
+	 * * Enabled: Expert cache delivery method.
+	 * * Enabled: .htaccess rewrite rules for expert cache.
+	 * * Disabled: Caching pages for logged-in users.
+	 * * Disabled: Caching pages with GET parameters.
+	 * * Enabled: Serve existing cache while being generated.
+	 * * Disabled: Make known users anonymous and serve supercached files.
+	 * * Disabled: Proudly tell the world your server is Stephen Fry proof.
+	 * * Enabled: Mobile device support.
 	 *
 	 * See 'Examples' section for demonstrations of usage.
 	 *
