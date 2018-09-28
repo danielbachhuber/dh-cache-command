@@ -309,33 +309,6 @@ class DH_Cache_Command {
 				'expected' => 1,
 			),
 			array(
-				'label'           => '.htaccess rewrite rules for expert cache',
-				'expected'        => 'configured',
-				'get_callback'    => function() {
-					$home_path = ABSPATH;
-					$home_path = trailingslashit( $home_path );
-					if ( ! file_exists( $home_path . '.htaccess' ) ) {
-						return 'missing-htaccess';
-					}
-					if ( ! function_exists( 'extract_from_markers' ) ) {
-						include_once( ABSPATH . 'wp-admin/includes/misc.php' );
-					}
-					$generated_rules = wpsc_get_htaccess_info();
-					$existing_rules  = implode( "\n", extract_from_markers( $home_path . '.htaccess', 'WPSuperCache' ) );
-					if ( $generated_rules['rules'] !== $existing_rules ) {
-						return 'missing-rules';
-					}
-					return 'configured';
-				},
-				'update_callback' => function() {
-					global $update_mod_rewrite_rules_error;
-					update_mod_rewrite_rules();
-					if ( $update_mod_rewrite_rules_error ) {
-						WP_CLI::warning( "Mod rewrite update failure: {$update_mod_rewrite_rules_error}" );
-					}
-				},
-			),
-			array(
 				'label'    => "Don't cache pages for known users",
 				'global'   => 'wp_cache_not_logged_in',
 				'expected' => 1,
@@ -364,6 +337,35 @@ class DH_Cache_Command {
 				'label'    => 'Mobile device support',
 				'global'   => 'wp_cache_mobile_enabled',
 				'expected' => 1,
+			),
+			// Always needs to be last, because it's dependent on the other
+			// settings.
+			array(
+				'label'           => '.htaccess rewrite rules for expert cache',
+				'expected'        => 'configured',
+				'get_callback'    => function() {
+					$home_path = ABSPATH;
+					$home_path = trailingslashit( $home_path );
+					if ( ! file_exists( $home_path . '.htaccess' ) ) {
+						return 'missing-htaccess';
+					}
+					if ( ! function_exists( 'extract_from_markers' ) ) {
+						include_once( ABSPATH . 'wp-admin/includes/misc.php' );
+					}
+					$generated_rules = wpsc_get_htaccess_info();
+					$existing_rules  = implode( "\n", extract_from_markers( $home_path . '.htaccess', 'WPSuperCache' ) );
+					if ( $generated_rules['rules'] !== $existing_rules ) {
+						return 'missing-rules';
+					}
+					return 'configured';
+				},
+				'update_callback' => function() {
+					global $update_mod_rewrite_rules_error;
+					update_mod_rewrite_rules();
+					if ( $update_mod_rewrite_rules_error ) {
+						WP_CLI::warning( "Mod rewrite update failure: {$update_mod_rewrite_rules_error}" );
+					}
+				},
 			),
 		);
 		// Load global variables into scope because they aren't handled by WP-CLI.
